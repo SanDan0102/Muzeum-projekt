@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umszki Museum</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&family=Rajdhani:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+  <span class="icon" id="themeIcon">◈</span>
+  <span id="themeLabel">Jővőbeli mód</span>
+</button>
+
+<div class="museum-frame">
+  <header class="museum-header">
+    <div class="museum-label" id="headerLabel">1927</div>
+    <h1 class="museum-title" id="headerTitle">Umszki Museum</h1>
+    <p class="museum-subtitle" id="headerSub">Fedezd fel a menő kollekciónkant</p>
+  </header>
+
+  <div class="carousel-section">
+    <div class="carousel-track-wrapper" id="carouselWrapper">
+      <div class="carousel-track" id="carouselTrack"></div>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+    <p class="swipe-hint" id="swipeHint">Görgess/Húzz!</p>
+  </div>
+</div>
+
+<!-- Detail Overlay -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-panel" id="detailPanel">
+    <button class="detail-close" id="detailClose" aria-label="Close">✕</button>
+    <div class="detail-left">
+      <div id="detailImgWrap"></div>
+      <div class="artifact-number" id="detailNumber"></div>
+    </div>
+    <div class="detail-right">
+      <div class="detail-era" id="detailEra"></div>
+      <h2 class="detail-title" id="detailTitle"></h2>
+      <p class="detail-origin" id="detailOrigin"></p>
+      <div class="detail-divider"></div>
+      <p class="detail-desc" id="detailDesc"></p>
+      <div class="detail-meta" id="detailMeta"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THEME TOGGLE ───────────────────────────────────────────────────────────
+let isFuturistic = false;
+
+function toggleTheme() {
+  isFuturistic = !isFuturistic;
+  document.body.classList.toggle('futuristic', isFuturistic);
+  document.getElementById('themeIcon').textContent = isFuturistic ? '⟁' : '◈';
+  document.getElementById('themeLabel').textContent = isFuturistic ? 'Régi mód' : 'Jővőbeli mód';
+  document.getElementById('headerLabel').textContent = isFuturistic ? 'SYS_ID :: Umszki Museum 2.0' : '2093';
+  document.getElementById('headerTitle').textContent = isFuturistic ? 'Umszki Museum' : 'Umszki Museum';
+  document.getElementById('headerSub').textContent = isFuturistic ? 'Menő kollekció — Interaktív képernyő' : 'Fedezd fel a menő kollekciónkant';
+  document.getElementById('swipeHint').textContent = isFuturistic ? '<Görgess hogy navigálj>' : 'Görgess/Húzz!';
+}
+
+// ── ARTIFACT DATA ──────────────────────────────────────────────────────────
+const artifacts = [
+  {
+    id: 'GR-0042',
+    name: 'Ancient Vase',
+    era: 'Greek Antiquity',
+    origin: 'Athens, Greece — 510 BCE',
+    desc: 'This black-figure amphora was used for storing precious olive oil. Its surface is adorned with intricate scenes depicting the labours of Heracles, rendered with extraordinary precision by an unknown Athenian craftsman.',
+    meta: { Material: 'Terracotta', Height: '32 cm', Origin: 'Greece', Period: 'Archaic' },
+    svg: `<svg class="artifact-svg" viewBox="0 0 100 150" width="140" height="200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="vaseG" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stop-color="#6b3a1a"/>
+          <stop offset="40%" stop-color="#c87941"/>
+          <stop offset="70%" stop-color="#b06530"/>
+          <stop offset="100%" stop-color="#5a2f10"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="50" cy="140" rx="22" ry="5" fill="#3a1f08" opacity="0.6"/>
+      <path d="M34,130 Q20,100 22,70 Q24,40 50,30 Q76,40 78,70 Q80,100 66,130 Z" fill="url(#vaseG)"/>
+      <path d="M40,30 Q42,18 44,12 L56,12 Q58,18 60,30 Z" fill="#b06530"/>
+      <ellipse cx="50" cy="11" rx="9" ry="3" fill="#8b4a20"/>
+      <path d="M34,130 Q50,135 66,130 Q64,138 50,140 Q36,138 34,130Z" fill="#5a2f10"/>
+      <path d="M22,70 Q12,65 14,80 Q16,92 22,90" fill="none" stroke="#8b4a20" stroke-width="4" stroke-linecap="round"/>
+      <path d="M78,70 Q88,65 86,80 Q84,92 78,90" fill="none" stroke="#8b4a20" stroke-width="4" stroke-linecap="round"/>
+      <g fill="#1c0e04" opacity="0.85">
+        <ellipse cx="40" cy="75" rx="4" ry="5"/>
+        <rect x="37.5" y="80" width="5" height="12" rx="1"/>
+        <line x1="35" y1="85" x2="43" y2="85" stroke="#1c0e04" stroke-width="2"/>
+        <line x1="38" y1="92" x2="36" y2="100"/>
+        <line x1="42" y1="92" x2="44" y2="100"/>
+        <ellipse cx="57" cy="73" rx="4" ry="5"/>
+        <rect x="54.5" y="78" width="5" height="14" rx="1"/>
+        <line x1="52" y1="83" x2="60" y2="83" stroke="#1c0e04" stroke-width="2"/>
+        <line x1="55" y1="92" x2="53" y2="101"/>
+        <line x1="59" y1="92" x2="61" y2="101"/>
+      </g>
+      <line x1="30" y1="55" x2="70" y2="55" stroke="#1c0e04" stroke-width="1" opacity="0.5"/>
+      <line x1="28" y1="110" x2="72" y2="110" stroke="#1c0e04" stroke-width="1" opacity="0.5"/>
+    </svg>`
+  },
+  {
+    id: 'EG-0118',
+    name: 'Canopic Jar',
+    era: 'New Kingdom Egypt',
+    origin: 'Thebes, Egypt — 1350 BCE',
+    desc: 'A limestone canopic jar bearing the head of the jackal god Duamutef, guardian of the stomach. Such vessels were essential funerary objects, used to preserve the organs of the deceased for the afterlife.',
+    meta: { Material: 'Limestone', Height: '28 cm', Origin: 'Egypt', Period: 'New Kingdom' },
+    svg: `<svg class="artifact-svg" viewBox="0 0 100 150" width="140" height="200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="jarG" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stop-color="#8a7a5a"/>
+          <stop offset="50%" stop-color="#c4b48a"/>
+          <stop offset="100%" stop-color="#7a6a4a"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="50" cy="143" rx="20" ry="5" fill="#3a3020" opacity="0.5"/>
+      <path d="M32,130 Q28,100 30,75 Q32,55 50,50 Q68,55 70,75 Q72,100 68,130 Z" fill="url(#jarG)"/>
+      <ellipse cx="50" cy="130" rx="19" ry="4" fill="#9a8a6a"/>
+      <path d="M38,50 Q40,38 42,32 L58,32 Q60,38 62,50 Z" fill="#b4a47a"/>
+      <ellipse cx="50" cy="28" rx="12" ry="10" fill="#9a8a6a"/>
+      <path d="M50,28 Q58,30 62,26 Q64,24 61,22 Q57,20 50,23 Z" fill="#8a7a5a"/>
+      <path d="M40,20 L37,10 L44,18 Z" fill="#8a7a5a"/>
+      <path d="M60,20 L63,10 L56,18 Z" fill="#8a7a5a"/>
+      <ellipse cx="44" cy="25" rx="2" ry="1.5" fill="#2a1a08"/>
+      <ellipse cx="56" cy="25" rx="2" ry="1.5" fill="#2a1a08"/>
+      <g stroke="#6a5a3a" stroke-width="0.8" fill="none" opacity="0.7">
+        <line x1="40" y1="70" x2="50" y2="70"/>
+        <rect x="41" y="75" width="8" height="5" rx="1"/>
+        <line x1="44" y1="85" x2="56" y2="85"/>
+        <circle cx="50" cy="95" r="3"/>
+        <line x1="47" y1="103" x2="53" y2="103"/>
+      </g>
+    </svg>`
+  },
+  {
+    id: 'RO-0231',
+    name: 'Bronze Fibula',
+    era: 'Roman Republic',
+    origin: 'Rome, Italy — 200 BCE',
+    desc: 'A remarkably preserved bronze fibula, used as an ornamental brooch to fasten garments. The sinuous bow is decorated with geometric incised patterns typical of the late Republican period.',
+    meta: { Material: 'Bronze', Length: '8 cm', Origin: 'Italy', Period: 'Republican' },
+    svg: `<svg class="artifact-svg" viewBox="0 0 140 100" width="180" height="130" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bronzeG" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#8b6914"/>
+          <stop offset="50%" stop-color="#c4a44a"/>
+          <stop offset="100%" stop-color="#6b4f10"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="70" cy="92" rx="45" ry="6" fill="#1a1005" opacity="0.4"/>
+      <path d="M15,75 Q15,20 70,18 Q125,20 125,75" fill="none" stroke="url(#bronzeG)" stroke-width="9" stroke-linecap="round"/>
+      <path d="M15,75 Q15,20 70,18 Q125,20 125,75" fill="none" stroke="#e8c870" stroke-width="1.5" stroke-dasharray="4,6" opacity="0.6"/>
+      <rect x="10" y="70" width="22" height="12" rx="2" fill="url(#bronzeG)"/>
+      <rect x="12" y="72" width="18" height="8" rx="1" fill="none" stroke="#c4a44a" stroke-width="0.5"/>
+      <line x1="120" y1="72" x2="14" y2="72" stroke="#c4a44a" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="124" cy="72" r="5" fill="url(#bronzeG)" stroke="#e8c870" stroke-width="0.8"/>
+      <g stroke="#5a3a08" stroke-width="1" fill="none" opacity="0.5">
+        <path d="M40,42 L50,35 L60,42 L50,49 Z"/>
+        <path d="M80,40 L90,33 L100,40 L90,47 Z"/>
+      </g>
+    </svg>`
+  },
+  {
+    id: 'ME-0055',
+    name: 'Cuneiform Tablet',
+    era: 'Babylonian Empire',
+    origin: 'Mesopotamia — 1750 BCE',
+    desc: 'A baked clay tablet inscribed in Old Babylonian cuneiform script, containing a passage from the Code of Hammurabi. One of the earliest written legal codes in human history.',
+    meta: { Material: 'Clay', Size: '12×9 cm', Origin: 'Iraq', Period: 'Old Babylonian' },
+    svg: `<svg class="artifact-svg" viewBox="0 0 120 140" width="160" height="190" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="clayG" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="#9c7a4a"/>
+          <stop offset="60%" stop-color="#c4a06a"/>
+          <stop offset="100%" stop-color="#8a6a3a"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="60" cy="138" rx="32" ry="6" fill="#2a1a08" opacity="0.4"/>
+      <rect x="10" y="10" width="100" height="125" rx="8" fill="url(#clayG)"/>
+      <rect x="10" y="10" width="100" height="125" rx="8" fill="none" stroke="#7a5a2a" stroke-width="3"/>
+      <g fill="#5a3a1a" opacity="0.75">
+        <polygon points="22,25 28,23 27,28"/><polygon points="32,25 38,23 37,28"/><polygon points="42,25 48,23 47,28"/>
+        <polygon points="55,23 55,29 60,26"/><polygon points="65,25 71,23 70,28"/><polygon points="78,25 84,23 83,28"/><polygon points="90,25 96,23 95,28"/>
+        <polygon points="22,38 28,36 27,41"/><polygon points="35,36 35,42 40,39"/><polygon points="48,38 54,36 53,41"/>
+        <polygon points="60,38 66,36 65,41"/><polygon points="72,36 72,42 77,39"/><polygon points="84,38 90,36 89,41"/>
+        <polygon points="22,51 28,49 27,54"/><polygon points="30,49 30,55 35,52"/><polygon points="44,51 50,49 49,54"/>
+        <polygon points="56,51 62,49 61,54"/><polygon points="68,49 68,55 73,52"/><polygon points="80,51 86,49 85,54"/><polygon points="92,51 98,49 97,54"/>
+        <polygon points="22,64 28,62 27,67"/><polygon points="38,64 44,62 43,67"/><polygon points="52,62 52,68 57,65"/>
+        <polygon points="64,64 70,62 69,67"/><polygon points="76,64 82,62 81,67"/><polygon points="90,62 90,68 95,65"/>
+        <polygon points="22,77 28,75 27,80"/><polygon points="32,75 32,81 37,78"/><polygon points="46,77 52,75 51,80"/>
+        <polygon points="60,77 66,75 65,80"/><polygon points="74,75 74,81 79,78"/><polygon points="86,77 92,75 91,80"/>
+        <polygon points="22,90 28,88 27,93"/><polygon points="40,90 46,88 45,93"/><polygon points="54,88 54,94 59,91"/>
+        <polygon points="66,90 72,88 71,93"/><polygon points="80,90 86,88 85,93"/>
+        <polygon points="22,103 28,101 27,106"/><polygon points="36,101 36,107 41,104"/><polygon points="58,103 64,101 63,106"/><polygon points="78,103 84,101 83,106" opacity="0.4"/>
+        <rect x="15" y="112" width="90" height="1.5" rx="0.5" opacity="0.5"/>
+        <polygon points="22,120 28,118 27,123"/><polygon points="50,118 50,124 55,121"/><polygon points="80,120 86,118 85,123"/>
+      </g>
+    </svg>`
+  },
+  {
+    id: 'CH-0309',
+    name: 'Porcelain Bowl',
+    era: 'Ming Dynasty',
+    origin: 'Jingdezhen, China — 1435 CE',
+    desc: 'An exquisite blue-and-white porcelain bowl from the reign of the Xuande Emperor. Its walls are painted with stylised lotus scrolls and maritime scenes, representing the pinnacle of Chinese ceramic artistry.',
+    meta: { Material: 'Porcelain', Diameter: '22 cm', Origin: 'China', Period: 'Ming Dynasty' },
+    svg: `<svg class="artifact-svg" viewBox="0 0 130 110" width="175" height="150" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bowlG" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="#e8e0d0"/>
+          <stop offset="50%" stop-color="#f5f0e8"/>
+          <stop offset="100%" stop-color="#d0c8b8"/>
+        </linearGradient>
+        <linearGradient id="bowlInner" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#ddd5c5"/>
+          <stop offset="100%" stop-color="#c8c0b0"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="65" cy="107" rx="38" ry="5" fill="#1a1005" opacity="0.35"/>
+      <path d="M12,55 Q15,95 65,100 Q115,95 118,55 Q115,25 65,20 Q15,25 12,55 Z" fill="url(#bowlG)"/>
+      <ellipse cx="65" cy="28" rx="53" ry="14" fill="#ede5d5"/>
+      <ellipse cx="65" cy="30" rx="48" ry="11" fill="url(#bowlInner)"/>
+      <ellipse cx="65" cy="98" rx="26" ry="5" fill="#c0b8a8"/>
+      <g fill="none" stroke="#2a5a8a" stroke-width="1.5" opacity="0.75">
+        <path d="M20,58 Q30,48 40,58 Q50,68 60,58 Q70,48 80,58 Q90,68 100,58 Q110,48 115,55"/>
+        <path d="M18,48 Q65,38 112,48" stroke-width="0.8" opacity="0.5"/>
+        <path d="M14,70 Q65,62 116,70" stroke-width="0.8" opacity="0.5"/>
+      </g>
+      <g fill="#2a5a8a" opacity="0.65">
+        <circle cx="38" cy="75" r="4"/><circle cx="38" cy="75" r="7" fill="none" stroke="#2a5a8a" stroke-width="1"/>
+        <circle cx="65" cy="80" r="4"/><circle cx="65" cy="80" r="7" fill="none" stroke="#2a5a8a" stroke-width="1"/>
+        <circle cx="92" cy="75" r="4"/><circle cx="92" cy="75" r="7" fill="none" stroke="#2a5a8a" stroke-width="1"/>
+      </g>
+      <ellipse cx="65" cy="28" rx="53" ry="14" fill="none" stroke="#2a5a8a" stroke-width="2.5" opacity="0.4"/>
+    </svg>`
+  },
+  {
+    id: 'VI-0177',
+    name: 'Norse Brooch',
+    era: 'Viking Age',
+    origin: 'Scandinavia — 900 CE',
+    desc: 'An oval tortoise brooch, intricately cast in gilt bronze. Such brooches were worn in pairs to fasten the straps of a Norse woman\'s apron dress. The interlace pattern represents the world-serpent Jörmungandr.',
+    meta: { Material: 'Gilt Bronze', Diameter: '11 cm', Origin: 'Norway', Period: 'Viking Age' },
+    svg: `<svg class="artifact-svg" viewBox="0 0 110 140" width="150" height="190" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="giltG" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="#c8a030"/>
+          <stop offset="50%" stop-color="#e8c850"/>
+          <stop offset="100%" stop-color="#a07820"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="55" cy="136" rx="30" ry="5" fill="#1a1005" opacity="0.35"/>
+      <ellipse cx="55" cy="70" rx="44" ry="60" fill="url(#giltG)"/>
+      <ellipse cx="55" cy="70" rx="44" ry="60" fill="none" stroke="#a07820" stroke-width="2"/>
+      <ellipse cx="55" cy="70" rx="38" ry="54" fill="none" stroke="#c8a030" stroke-width="1" opacity="0.5"/>
+      <g fill="none" stroke="#7a5810" stroke-width="2.5" opacity="0.8" stroke-linecap="round">
+        <path d="M30,45 Q40,30 55,35 Q70,30 80,45 Q85,60 75,70 Q80,80 75,95 Q65,110 55,108 Q45,110 35,95 Q30,80 35,70 Q25,60 30,45 Z"/>
+        <path d="M40,50 Q55,38 70,50 Q80,65 70,80 Q55,95 40,80 Q30,65 40,50 Z"/>
+      </g>
+      <ellipse cx="55" cy="68" rx="14" ry="12" fill="#b88828" stroke="#7a5810" stroke-width="1.5"/>
+      <ellipse cx="49" cy="64" rx="3" ry="3" fill="#3a2808"/>
+      <ellipse cx="61" cy="64" rx="3" ry="3" fill="#3a2808"/>
+      <path d="M47,72 Q55,78 63,72" fill="none" stroke="#3a2808" stroke-width="1.5"/>
+    </svg>`
+  },
+  {
+    id: 'IR-0088',
+    name: 'Persian Astrolabe',
+    era: 'Islamic Golden Age',
+    origin: 'Isfahan, Persia — 1290 CE',
+    desc: 'A masterwork of Islamic astronomy, this brass astrolabe was used to calculate the position of stars and determine prayer times. Its rete is engraved with star pointers for thirty-two celestial bodies, each inscribed in elegant Kufic script.',
+    meta: { Material: 'Brass', Diameter: '18 cm', Origin: 'Iran', Period: 'Medieval Islamic' },
+    svg: `<svg class="artifact-svg" viewBox="0 0 130 130" width="175" height="175" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="brassG" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="#a08020"/>
+          <stop offset="50%" stop-color="#d4b048"/>
+          <stop offset="100%" stop-color="#8a6810"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="65" cy="125" rx="36" ry="6" fill="#1a1005" opacity="0.4"/>
+      <circle cx="65" cy="63" r="58" fill="url(#brassG)" stroke="#8a6810" stroke-width="2"/>
+      <circle cx="65" cy="63" r="52" fill="#c4a030" stroke="#8a6810" stroke-width="1"/>
+      <g stroke="#5a4010" stroke-width="1" opacity="0.6">
+        <line x1="65" y1="5" x2="65" y2="11"/><line x1="65" y1="115" x2="65" y2="121"/>
+        <line x1="7" y1="63" x2="13" y2="63"/><line x1="117" y1="63" x2="123" y2="63"/>
+        <line x1="24" y1="21" x2="29" y2="26"/><line x1="101" y1="100" x2="106" y2="105"/>
+        <line x1="24" y1="105" x2="29" y2="100"/><line x1="101" y1="26" x2="106" y2="21"/>
+      </g>
+      <circle cx="65" cy="63" r="48" fill="none" stroke="#8a6010" stroke-width="0.8" opacity="0.7"/>
+      <circle cx="65" cy="63" r="36" fill="none" stroke="#8a6010" stroke-width="0.8" opacity="0.5"/>
+      <circle cx="65" cy="63" r="22" fill="none" stroke="#8a6010" stroke-width="0.8" opacity="0.5"/>
+      <line x1="65" y1="15" x2="65" y2="111" stroke="#6a4808" stroke-width="2.5" opacity="0.8"/>
+      <line x1="17" y1="63" x2="113" y2="63" stroke="#6a4808" stroke-width="2.5" opacity="0.8"/>
+      <g fill="#5a3808" opacity="0.8">
+        <polygon points="65,17 68,24 62,24"/>
+        <polygon points="113,63 106,60 106,66"/>
+        <polygon points="38,32 42,38 36,37"/>
+        <polygon points="92,32 88,38 94,37"/>
+        <polygon points="38,94 42,88 36,89"/>
+        <polygon points="92,94 88,88 94,89"/>
+      </g>
+      <circle cx="65" cy="63" r="8" fill="url(#brassG)" stroke="#6a4808" stroke-width="1.5"/>
+      <circle cx="65" cy="63" r="3" fill="#5a3808"/>
+      <ellipse cx="65" cy="7" rx="7" ry="5" fill="none" stroke="#c4a030" stroke-width="2.5"/>
+    </svg>`
+  }
+];
+
+// ── CAROUSEL LOGIC ─────────────────────────────────────────────────────────
+const track = document.getElementById('carouselTrack');
+const wrapper = document.getElementById('carouselWrapper');
+const dotsContainer = document.getElementById('carouselDots');
+
+let currentIndex = 1;
+let isDragging = false;
+let startX = 0;
+let startScrollLeft = 0;
+let dragDistance = 0;
+
+const CARD_WIDTH = 180;
+const GAP = 20;
+const STEP = CARD_WIDTH + GAP;
+
+artifacts.forEach((a, i) => {
+  const card = document.createElement('div');
+  card.className = 'carousel-card' + (i === currentIndex ? ' active' : '');
+  card.dataset.index = i;
+  card.innerHTML = `<div class="card-img-wrap">${a.svg}</div><div class="card-name">${a.name}</div>`;
+  card.addEventListener('click', () => { if (Math.abs(dragDistance) < 5) openDetail(i); });
+  track.appendChild(card);
+});
+
+artifacts.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === currentIndex ? ' active' : '');
+  dot.addEventListener('click', () => scrollToIndex(i));
+  dotsContainer.appendChild(dot);
+});
+
+function scrollToIndex(idx) {
+  idx = Math.max(0, Math.min(artifacts.length - 1, idx));
+  currentIndex = idx;
+  const wrapperWidth = wrapper.clientWidth;
+  const offset = idx * STEP - (wrapperWidth / 2 - CARD_WIDTH / 2);
+  track.style.transform = `translateX(${-Math.max(0, offset)}px)`;
+  document.querySelectorAll('.carousel-card').forEach((c, i) => c.classList.toggle('active', i === idx));
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+wrapper.addEventListener('mousedown', e => {
+  isDragging = true; dragDistance = 0; startX = e.pageX;
+  const m = track.style.transform.match(/translateX\((.+)px\)/);
+  startScrollLeft = m ? parseFloat(m[1]) : 0;
+  track.style.transition = 'none';
+});
+document.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  dragDistance = e.pageX - startX;
+  track.style.transform = `translateX(${startScrollLeft + dragDistance}px)`;
+});
+document.addEventListener('mouseup', () => {
+  if (!isDragging) return;
+  isDragging = false;
+  track.style.transition = '';
+  if (dragDistance < -50) scrollToIndex(currentIndex + 1);
+  else if (dragDistance > 50) scrollToIndex(currentIndex - 1);
+  else scrollToIndex(currentIndex);
+});
+
+let touchStartX = 0;
+wrapper.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; dragDistance = 0; }, { passive: true });
+wrapper.addEventListener('touchmove', e => { dragDistance = e.touches[0].clientX - touchStartX; }, { passive: true });
+wrapper.addEventListener('touchend', () => {
+  if (dragDistance < -50) scrollToIndex(currentIndex + 1);
+  else if (dragDistance > 50) scrollToIndex(currentIndex - 1);
+  else scrollToIndex(currentIndex);
+});
+
+setTimeout(() => scrollToIndex(2), 50);
+
+// ── DETAIL VIEW ────────────────────────────────────────────────────────────
+const overlay = document.getElementById('detailOverlay');
+const closeBtn = document.getElementById('detailClose');
+
+function openDetail(idx) {
+  const a = artifacts[idx];
+  document.getElementById('detailEra').textContent = a.era;
+  document.getElementById('detailTitle').textContent = a.name;
+  document.getElementById('detailOrigin').textContent = a.origin;
+  document.getElementById('detailDesc').textContent = a.desc;
+  document.getElementById('detailNumber').textContent = `Catalogue № ${a.id}`;
+  const imgWrap = document.getElementById('detailImgWrap');
+  imgWrap.innerHTML = a.svg.replace(/width="\d+"/, 'width="200"').replace(/height="\d+"/, 'height="260"');
+  document.getElementById('detailMeta').innerHTML = Object.entries(a.meta).map(([k,v]) =>
+    `<div class="meta-item"><div class="meta-label">${k}</div><div class="meta-value">${v}</div></div>`
+  ).join('');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+closeBtn.addEventListener('click', closeDetail);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeDetail(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDetail();
+  if (e.key === 'ArrowRight') scrollToIndex(currentIndex + 1);
+  if (e.key === 'ArrowLeft') scrollToIndex(currentIndex - 1);
+});
+</script>
+</body>
+</html>
